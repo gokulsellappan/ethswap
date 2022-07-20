@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import Home from "./Home";
 import style from "styled-components";
+import Token from "../abis/Token.json";
 
 function App() {
   const [isLoading, setLoading] = useState(false);
@@ -12,10 +13,35 @@ function App() {
 
   async function web3() {
     window.web3 = new Web3(window.ethereum);
+    const web3 = window.web3;
     const address = await window.web3.eth.getAccounts();
     setAccount(address[0]);
+    console.log(account);
+
+    // const token = new web3.eth.Contract(
+    //   Token.abi,
+    //   "0x5216b0AB3F75293D6491C2a2B1A29e42c943cB56"
+    // );
+    // console.log(token);
+
+    // if (account > 0) {
+    //   let tokenBalance = await token.methods.balanceOf(account).call();
+    //   console.log(tokenBalance);
+    // }
+
     if (address == undefined) {
       setAccount(0);
+    }
+    if (account > 0) {
+      const balance = await web3.eth.getBalance(account);
+      console.log(web3.utils.fromWei(balance.toString(), "ether"));
+      web3.eth.getTransactionCount(account).then(console.log);
+      let block = await web3.eth.getBlock("latest");
+      console.log(block);
+      let number = block.number;
+      console.log(number);
+      let transactions = block.transactions;
+      console.log(transactions);
     }
   }
 
@@ -26,8 +52,10 @@ function App() {
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum);
       await window.ethereum.enable();
+      console.log("web3first");
     } else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider);
+      console.log("web3");
     } else {
       window.alert(
         "Non-Ethereum browser detected. You should consider trying MetaMask!"
@@ -40,6 +68,7 @@ function App() {
     const store = await web3.eth.getAccounts();
     setAccount(store[0]);
   }
+
   function loading() {
     return (
       <Container>

@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.8.0;
 
 import "./Token.sol";
 
@@ -32,12 +32,12 @@ contract EthSwap{
 		emit TokenPurchased(msg.sender,address(token),tokenAmount,rate);
 	}
 
-	function sellToken(uint _amount)public {
-		require(token.balanceOf(msg.sender)>=_amount);
-		uint etherAmount=_amount/rate;
-		require(address(this).balance>=etherAmount);
-		token.transferFrom(msg.sender,address(this),_amount);
-		msg.sender.transfer(etherAmount);
-		emit TokenSold(msg.sender,address(token),_amount,rate);
-	}
+	// function sellToken(uint _amount)public payable {
+	// 	require(token.balanceOf(msg.sender)>=_amount);
+	// 	uint etherAmount=_amount/rate;
+	// 	require(address(this).balance>=etherAmount);
+	// 	token.transferFrom(msg.sender,address(this),_amount);
+	// 	msg.sender.transfer(etherAmount);
+	// 	emit TokenSold(msg.sender,address(token),_amount,rate);
+	// }
 }
