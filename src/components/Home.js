@@ -4,7 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Button from "@mui/material/Button";
 
-function Home() {
+function Home(props) {
   const [Value, setValue] = useState("0"); //    "1" is the default value in this scenario. Replace it with the default value that suits your needs.
   const [firstoutput, setFirstOutput] = useState("");
   const [secondoutput, setSecondOutput] = useState("");
@@ -143,6 +143,10 @@ function Home() {
               borderRadius: "20px",
             }}
             variant="contained"
+
+            onClick={()=>{
+              props.buyToken(firstoutput,secondoutput)
+            }}
           >
             SWAP
           </Button>

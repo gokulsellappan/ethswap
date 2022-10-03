@@ -6,10 +6,18 @@ import Header from "./Header";
 import Home from "./Home";
 import style from "styled-components";
 import Token from "../abis/Token.json";
+import EthSwap from "../abis/EthSwap.json";
+
 
 function App() {
   const [isLoading, setLoading] = useState(false);
   const [account, setAccount] = useState(0);
+  let tokenData;
+  let ethSwapData;
+  let token;
+  let ethSwap;
+  let networkId;
+ 
 
   async function web3() {
     window.web3 = new Web3(window.ethereum);
@@ -17,34 +25,52 @@ function App() {
     const address = await window.web3.eth.getAccounts();
     setAccount(address[0]);
     console.log(account);
-
-    // const token = new web3.eth.Contract(
-    //   Token.abi,
-    //   "0x5216b0AB3F75293D6491C2a2B1A29e42c943cB56"
-    // );
-    // console.log(token);
-
-    // if (account > 0) {
-    //   let tokenBalance = await token.methods.balanceOf(account).call();
-    //   console.log(tokenBalance);
-    // }
-
     if (address == undefined) {
       setAccount(0);
     }
-    if (account > 0) {
-      const balance = await web3.eth.getBalance(account);
-      console.log(web3.utils.fromWei(balance.toString(), "ether"));
-      web3.eth.getTransactionCount(account).then(console.log);
-      let block = await web3.eth.getBlock("latest");
-      console.log(block);
-      let number = block.number;
-      console.log(number);
-      let transactions = block.transactions;
-      console.log(transactions);
+    networkId =  await web3.eth.net.getId()
+    
+    tokenData = Token.networks[networkId]
+    if(tokenData) {
+      token = new web3.eth.Contract(Token.abi, tokenData.address)
+    } else {
+      window.alert('Token contract not deployed to detected network.')
     }
-  }
 
+    // Load EthSwap
+    ethSwapData = EthSwap.networks[networkId]
+    if(ethSwapData) {
+      ethSwap = new web3.eth.Contract(EthSwap.abi, ethSwapData.address)
+    } else {
+      window.alert('EthSwap contract not deployed to detected network.')
+    }
+
+    // if (account > 0) {
+    //   const balance = await web3.eth.getBalance(account);
+    //   console.log(web3.utils.fromWei(balance.toString(), "ether"));
+    //   web3.eth.getTransactionCount(account).then(console.log);
+    //   let block = await web3.eth.getBlock("latest");
+    //   console.log(block);
+    //   let number = block.number;
+    //   console.log(number);
+    //   let transactions = block.transactions;
+    //   console.log(transactions);
+    // }
+  }
+      async function buyToken(etherAmount,secondoutput){
+        if (account > 0 && etherAmount>0 && secondoutput>0) {
+          window.web3 = new Web3(window.ethereum);
+          const web3 = window.web3;
+          let tokenBalance = await token.methods.balanceOf(ethSwapData.address).call();
+          console.log("Balance"+tokenBalance);
+          const ethAmount=web3.utils.toWei(etherAmount, 'Ether')
+          ethSwap.methods.buyTokens().send({ value: ethAmount, from: account }).on('transactionHash', (hash) => {
+            alert("Transaction completed Successfully");
+          })
+        }else{
+          alert("Token value should more than 0 !!!")
+        }
+      }
   function LoadingStatus(e) {
     setLoading(e);
   }
@@ -91,7 +117,9 @@ function App() {
             parentCallback={LoadingStatus}
             web3={web3}
           />
-          <Home />
+          <Home
+          buyToken={buyToken}
+           />
         </Wrap>
       </div>
     );

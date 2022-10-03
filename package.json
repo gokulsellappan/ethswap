@@ -31,6 +31,7 @@
     "sharp": "^0.30.5",
     "styled-components": "^5.3.5",
     "truffle": "^5.0.5",
+    "truffle-hdwallet-provider": "^1.0.17",
     "web-vitals": "^2.1.4",
     "web3": "^1.7.3"
   },
