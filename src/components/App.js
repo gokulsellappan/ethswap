@@ -58,18 +58,23 @@ function App() {
     // }
   }
       async function buyToken(etherAmount,secondoutput){
-        if (account > 0 && etherAmount>0 && secondoutput>0) {
-          window.web3 = new Web3(window.ethereum);
-          const web3 = window.web3;
-          let tokenBalance = await token.methods.balanceOf(ethSwapData.address).call();
-          console.log("Balance"+tokenBalance);
-          const ethAmount=web3.utils.toWei(etherAmount, 'Ether')
-          ethSwap.methods.buyTokens().send({ value: ethAmount, from: account }).on('transactionHash', (hash) => {
-            alert("Transaction completed Successfully");
-          })
+        if(account > 0){
+          if (etherAmount>0 && secondoutput>0) {
+            window.web3 = new Web3(window.ethereum);
+            const web3 = window.web3;
+            let tokenBalance = await token.methods.balanceOf(ethSwapData.address).call();
+            console.log("Balance"+tokenBalance);
+            const ethAmount=web3.utils.toWei(etherAmount, 'Ether')
+            ethSwap.methods.buyTokens().send({ value: ethAmount, from: account }).on('transactionHash', (hash) => {
+              alert("Transaction completed Successfully");
+            })
+          }else{
+            alert("Token value should more than 0 !!!")
+          }
         }else{
-          alert("Token value should more than 0 !!!")
+          alert("connect wallet!!!")
         }
+        
       }
   function LoadingStatus(e) {
     setLoading(e);
